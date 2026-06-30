@@ -13,7 +13,7 @@
 # This is used to exclude build targets that depend on sanitizers such as
 # fuzzers on architectures that don't support sanitizers yet (e.g. arm).
 ARCH?=amd64
-BOARD ?= bds
+BOARD ?= hx30
 
 # Directory where the board is configured (includes /$(BOARD) at the end)
 BDIR:=$(wildcard board/$(BOARD))
@@ -256,6 +256,8 @@ ifneq ($(BASEDIR),$(BDIR))
 include $(BDIR)/build.mk
 endif
 include chip/$(CHIP)/build.mk
+# Use system arm-none-eabi toolchain if available, instead of coreboot SDK
+CROSS_COMPILE_arm ?= $(if $(shell which arm-none-eabi-gcc 2>/dev/null),arm-none-eabi-,)
 include core/$(CORE)/build.mk
 include common/build.mk
 include driver/build.mk
